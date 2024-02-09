@@ -9,7 +9,14 @@ jobs:
     steps:
       - name: Get code
         uses: actions/checkout@v4
+      - name: Cache dependencies
+        id: caching-deps
+        uses: actions/cache@v4
+        with:
+          path: ~/.npm
+          key: ${{ runner.ubuntu-latest }}-${{ hashFiles('**/node_modules') }}
       - name: Install dependencies
+        if: steps.caching-deps.outputs.cache-hit != 'true'
         run: npm ci
       - name: Lint code
         run: npm run lint
